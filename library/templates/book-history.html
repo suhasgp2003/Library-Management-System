@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>History - {{ book.title }}</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Student</th>
+        <th>Issue Date</th>
+        <th>Return Date</th>
+        <th>Status</th>
+    </tr>
+
+    {% for record in history %}
+    <tr>
+        <td>{{ record.student.student_name }}</td>
+        <td>{{ record.issue_date }}</td>
+        <td>{{ record.return_date }}</td>
+        <td>
+            {% if record.returned_status %}
+                Returned
+            {% else %}
+                Issued
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">No history available for this book.</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
