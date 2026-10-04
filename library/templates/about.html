@@ -1,17 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}About the library{% endblock %}
 {% block content %}
-<h2>About Us</h2>
-
-<p>
-The Library Management System is a Django-based web application that helps manage books,
-students, and library records. It provides an easy way to organize library resources.
-</p>
-<br><br>
-<h3>Features</h3><br>
-<ul>
-    <li>Book Management</li>
-    <li>Student Management</li>
-    <li>Book Search</li>
-    <li>Issue & Return Books</li>
-</ul>
+<div class="page-heading"><div><p class="eyebrow">MORE THAN A COLLECTION OF BOOKS</p><h1>A home for curious minds.</h1><p class="muted mt-2">Our library connects people, ideas, and the joy of discovery.</p></div></div>
+<section class="editorial-panel"><svg class="icon"><use href="#i-book"/></svg><h2>A little room.<br>Endless possibilities.</h2><p>The Central Library brings books, readers, and library records together in one welcoming space. Find a title, explore the collection, and follow each book’s journey through our community.</p><a class="button button-primary mt-6" href="{% url 'books' %}">Explore our shelves <svg class="icon"><use href="#i-arrow"/></svg></a></section>
+<section class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-7" aria-label="Library features"><article class="panel"><svg class="icon feature-icon"><use href="#i-book"/></svg><h3 class="mt-4">Discover something new</h3><p class="muted mt-2">Search by title, author, or category and find your next great read.</p></article><article class="panel"><svg class="icon feature-icon"><use href="#i-users"/></svg><h3 class="mt-4">A community of readers</h3><p class="muted mt-2">Keep reader details organized and easy to find.</p></article><article class="panel"><svg class="icon feature-icon"><use href="#i-clock"/></svg><h3 class="mt-4">Every chapter, recorded</h3><p class="muted mt-2">Issue and return books, check availability, and explore borrowing history.</p></article></section>
 {% endblock %}

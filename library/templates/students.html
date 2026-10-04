@@ -1,26 +1,9 @@
 {% extends 'base.html' %}
+{% block title %}Readers{% endblock %}
 {% block content %}
-<h1>Students List</h1>
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Name</th>
-        <th>USN</th>
-        <th>Email</th>
-        <th>Department</th>
-    </tr>
-    {% for student in students %}
-    <tr>
-        <td>{{student.student_name}}</td>
-        <td>{{student.usn}}</td>
-        <td>{{student.email}}</td>
-        <td>{{student.department}}</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="4">No students available</td>
-    </tr>
-    {% endfor %}
-</table>
-
-
+<div class="page-heading"><div><p class="eyebrow">OUR READING COMMUNITY</p><h1>Good books. Great company.</h1><p class="muted mt-2">Meet the readers who bring our library to life.</p></div><span class="subtle-badge">{{ students|length }} registered reader{{ students|length|pluralize }}</span></div>
+<div class="panel collection-tools" data-collection="students"><div class="search-field"><svg class="icon"><use href="#i-search"/></svg><label for="reader-search" class="sr-only">Search readers by name, USN, email, or department</label><input type="search" id="reader-search" placeholder="Find a reader by name, USN, email, or department…" data-search></div><div class="filter-row"><div class="flex flex-wrap items-center gap-3"><label class="muted text-sm" for="department-filter">Department</label><select class="select-field" id="department-filter" data-category-filter><option value="">All departments</option>{% for student in students %}<option value="{{ student.department }}">{{ student.department }}</option>{% endfor %}</select></div><button type="button" class="text-link text-sm" data-reset>Reset filters</button></div></div>
+<div class="section-heading mt-7"><h2>Reader directory</h2><p class="muted text-sm" role="status" aria-live="polite" data-result-count>{{ students|length }} readers</p></div>
+<section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5" aria-label="Reader directory" data-card-grid>{% for student in students %}<article class="reader-card" data-card data-title="{{ student.student_name }} {{ student.usn }} {{ student.email }}" data-category="{{ student.department }}"><div class="flex items-start justify-between gap-3"><span class="avatar avatar-large">{{ student.student_name|first|upper }}</span><span class="subtle-badge">Semester {{ student.semester }}</span></div><h3 class="mt-5">{{ student.student_name }}</h3><p class="muted text-sm mt-1">{{ student.department }}</p><dl class="reader-details"><div><dt>USN</dt><dd>{{ student.usn }}</dd></div><div><dt>Email</dt><dd><a class="text-link break-all" href="mailto:{{ student.email }}">{{ student.email }}</a></dd></div></dl></article>{% empty %}<div class="empty-state md:col-span-2 xl:col-span-3"><svg class="icon"><use href="#i-users"/></svg><h3>A community in the making</h3><p>Registered readers will appear in this directory.</p></div>{% endfor %}</section>
+<div class="empty-state mt-5" data-filter-empty hidden><h3>No readers found</h3><p>Try a different name, USN, or department.</p><button type="button" class="button button-secondary" data-reset>Reset filters</button></div>
 {% endblock %}

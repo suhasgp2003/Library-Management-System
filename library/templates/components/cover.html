@@ -1,0 +1,4 @@
+<div class="book-cover cover-{% if book.id|divisibleby:'6' %}blue{% elif book.id|divisibleby:'5' %}plum{% elif book.id|divisibleby:'4' %}sand{% elif book.id|divisibleby:'3' %}ink{% elif book.id|divisibleby:'2' %}clay{% else %}sage{% endif %}">
+    <div class="cover-fallback" aria-hidden="true"><span class="cover-edition">THE READING ROOM COLLECTION</span><span class="cover-ornament">✦</span><span class="cover-title">{{ book.title }}</span><span class="cover-line"></span><span class="cover-author">{{ book.author }}</span></div>
+    {% if book.isbn_number %}<img class="cover-image" data-cover src="https://covers.openlibrary.org/b/isbn/{{ book.isbn_number|urlencode }}-L.jpg?default=false" alt="Cover of {{ book.title }}" loading="lazy" referrerpolicy="no-referrer">{% endif %}
+</div>

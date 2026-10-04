@@ -1,0 +1,9 @@
+<article class="book-card" data-card data-title="{{ book.title }}" data-author="{{ book.author }}" data-category="{{ book.category }}" data-available="{{ book.available_copies }}">
+    <a class="cover-link" href="{% url 'book_history' book.id %}" aria-label="View {{ book.title }} and borrowing history">{% include 'components/cover.html' %}</a>
+    <div class="book-details">
+        <div class="flex items-center justify-between gap-2"><span class="category-label">{{ book.category|default:'Uncategorized' }}</span><span class="availability {% if book.available_copies == 0 %}unavailable{% endif %}"><span class="status-dot"></span>{% if book.available_copies > 0 %}Available{% else %}On loan{% endif %}</span></div>
+        <h3><a href="{% url 'book_history' book.id %}">{{ book.title }}</a></h3><p class="muted text-sm">{{ book.author }}</p>
+        <div class="book-actions"><span class="muted text-xs">{{ book.available_copies }} cop{{ book.available_copies|pluralize:'y,ies' }} available</span><a class="text-link text-xs" href="{% url 'book_history' book.id %}">History <span aria-hidden="true">↗</span></a></div>
+        {% if show_actions %}<div class="grid grid-cols-2 gap-2 mt-3">{% if book.available_copies > 0 %}<a class="button button-primary button-small" href="{% url 'issue_book' book.id %}">Issue book</a>{% else %}<span class="button button-disabled button-small" aria-disabled="true">Unavailable</span>{% endif %}<a class="button button-secondary button-small" href="{% url 'return_book' book.id %}">Return book</a></div>{% endif %}
+    </div>
+</article>
