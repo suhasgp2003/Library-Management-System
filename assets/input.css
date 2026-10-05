@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@source "../../templates";
-@source "../js";
+@source "../library/templates";
+@source "../library/static/js";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -26,6 +26,14 @@
 }
 
 @layer components {
+    .notice { @apply rounded-lg p-4 text-sm; background:var(--soft); border:1px solid var(--line); }
+    .notice-error,.field-errors { color:#a13e36; }
+    .dark .notice-error,.dark .field-errors { color:#ffc1b7; }
+    .manage-form .form-group,.manage-form>p { @apply mb-5; }
+    .manage-form label { @apply block text-sm font-medium mb-2; }
+    .manage-form input:not([type=hidden]),.manage-form select,.manage-form textarea { @apply w-full rounded-lg p-3 text-sm; border:1px solid var(--line); background:var(--paper); }
+    .manage-form .helptext { @apply block text-xs mt-2; color:var(--muted); }
+    .manage-form .errorlist { @apply text-sm mt-2; }
     .app-layout { @apply min-h-screen lg:grid; grid-template-columns:245px minmax(0,1fr); }
     .sidebar { background:var(--surface); border-right:1px solid var(--line); @apply p-5 lg:px-6 lg:py-8 flex flex-col lg:sticky lg:top-0 lg:h-screen; }
     .brand { @apply flex items-center gap-3 font-serif text-xl font-bold; line-height:1.1; }

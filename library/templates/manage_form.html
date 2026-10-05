@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}{{ heading }}{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">THE READING ROOM</p><h1>{{ heading }}</h1>{% if description %}<p class="muted mt-3">{{ description }}</p>{% endif %}</div></div>
+<section class="panel max-w-2xl">
+    <form method="post" class="manage-form" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div role="alert" class="notice notice-error">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="muted"> (required)</span>{% endif %}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="muted text-xs mt-2">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div role="alert" class="field-errors">{{ field.errors }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <div class="flex flex-wrap gap-3 mt-6"><button class="button button-primary" type="submit">{{ submit_label|default:'Save' }}</button><a class="button button-secondary" href="{% url 'books' %}">Back to collection</a></div>
+    </form>
+</section>
+{% endblock %}

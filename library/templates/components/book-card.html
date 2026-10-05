@@ -1,9 +1,20 @@
-<article class="book-card" data-card data-title="{{ book.title }}" data-author="{{ book.author }}" data-category="{{ book.category }}" data-available="{{ book.available_copies }}">
-    <a class="cover-link" href="{% url 'book_history' book.id %}" aria-label="View {{ book.title }} and borrowing history">{% include 'components/cover.html' %}</a>
+<article class="book-card">
+    <a class="cover-link" href="{% url 'book_history' book.id %}" aria-label="View {{ book.title }}">{% include 'components/cover.html' %}</a>
     <div class="book-details">
-        <div class="flex items-center justify-between gap-2"><span class="category-label">{{ book.category|default:'Uncategorized' }}</span><span class="availability {% if book.available_copies == 0 %}unavailable{% endif %}"><span class="status-dot"></span>{% if book.available_copies > 0 %}Available{% else %}On loan{% endif %}</span></div>
+        <div class="flex items-center justify-between gap-2"><span class="category-label">{{ book.category }}</span><span class="availability {% if book.free_copies == 0 or book.is_archived %}unavailable{% endif %}"><span class="status-dot"></span>{% if book.is_archived %}Archived{% elif book.free_copies > 0 %}Available{% elif book.held_copies %}Reserved{% else %}On loan{% endif %}</span></div>
         <h3><a href="{% url 'book_history' book.id %}">{{ book.title }}</a></h3><p class="muted text-sm">{{ book.author }}</p>
-        <div class="book-actions"><span class="muted text-xs">{{ book.available_copies }} cop{{ book.available_copies|pluralize:'y,ies' }} available</span><a class="text-link text-xs" href="{% url 'book_history' book.id %}">History <span aria-hidden="true">↗</span></a></div>
-        {% if show_actions %}<div class="grid grid-cols-2 gap-2 mt-3">{% if book.available_copies > 0 %}<a class="button button-primary button-small" href="{% url 'issue_book' book.id %}">Issue book</a>{% else %}<span class="button button-disabled button-small" aria-disabled="true">Unavailable</span>{% endif %}<a class="button button-secondary button-small" href="{% url 'return_book' book.id %}">Return book</a></div>{% endif %}
+        <div class="book-actions"><span class="muted text-xs">{{ book.free_copies }} cop{{ book.free_copies|pluralize:'y,ies' }} available{% if book.held_copies %} · {{ book.held_copies }} held{% endif %}</span><a class="text-link text-xs" href="{% url 'book_history' book.id %}">Details <span aria-hidden="true">↗</span></a></div>
+        {% if show_actions %}
+        {% if is_librarian %}
+        <div class="grid grid-cols-2 gap-2 mt-3">
+            {% if not book.is_archived %}{% if book.available_copies > 0 %}<a class="button button-primary button-small" href="{% url 'issue_book' book.id %}">Issue book</a>{% else %}<span class="button button-disabled button-small">Unavailable</span>{% endif %}<a class="button button-secondary button-small" href="{% url 'return_book' book.id %}">Return book</a>{% endif %}
+            <a class="button button-secondary button-small" href="{% url 'book_edit' book.id %}">Edit</a>
+            <form method="post" action="{% if book.is_archived %}{% url 'book_restore' book.id %}{% else %}{% url 'book_archive' book.id %}{% endif %}">{% csrf_token %}<button class="button button-secondary button-small w-full" type="submit">{% if book.is_archived %}Restore{% else %}Archive{% endif %}</button></form>
+        </div>
+        {% elif current_reader and book.free_copies == 0 and not book.is_archived %}
+        <form method="post" action="{% url 'reserve_book' book.id %}" class="mt-3">{% csrf_token %}<button class="button button-primary button-small w-full" type="submit">Reserve this book</button></form>
+        {% elif not user.is_authenticated %}<a class="text-link text-xs block mt-3" href="{% url 'login' %}">Sign in to borrow or reserve</a>
+        {% endif %}
+        {% endif %}
     </div>
 </article>

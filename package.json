@@ -2,8 +2,8 @@
   "name": "library-interface",
   "private": true,
   "scripts": {
-    "build:css": "tailwindcss -i ./library/static/css/input.css -o ./library/static/css/style.css --minify",
-    "watch:css": "tailwindcss -i ./library/static/css/input.css -o ./library/static/css/style.css --watch"
+    "build:css": "tailwindcss -i ./assets/input.css -o ./library/static/css/style.css --minify",
+    "watch:css": "tailwindcss -i ./assets/input.css -o ./library/static/css/style.css --watch"
   },
   "overrides": {
     "@parcel/watcher": "2.6.0"

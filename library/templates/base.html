@@ -32,7 +32,11 @@
             <nav class="primary-nav" aria-label="Main navigation">
                 <a href="{% url 'home' %}" {% if current == 'home' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-grid"/></svg>Overview</a>
                 <a href="{% url 'books' %}" {% if current == 'books' or current == 'book_history' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-book"/></svg>Book collection</a>
-                <a href="{% url 'students' %}" {% if current == 'students' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-users"/></svg>Readers</a>
+                {% if is_librarian %}<a href="{% url 'students' %}" {% if current == 'students' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-users"/></svg>Readers</a>{% endif %}
+                {% if user.is_authenticated %}
+                <a href="{% url 'loans' %}" {% if current == 'loans' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-clock"/></svg>{% if is_librarian %}Borrowing desk{% else %}My loans{% endif %}</a>
+                <a href="{% url 'reservations' %}" {% if current == 'reservations' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-book"/></svg>Reservations</a>
+                {% endif %}
             </nav>
             <div class="sidebar-bottom">
                 <div class="reading-note"><span class="eyebrow">A LITTLE INSPIRATION</span><p>One more chapter.<br>One new perspective.</p><svg class="icon"><use href="#i-book"/></svg></div>
@@ -47,9 +51,15 @@
         <div class="min-w-0">
             <header class="topbar">
                 <div class="flex items-center gap-3"><span class="status-dot"></span><span class="text-sm">A space for curious minds</span></div>
-                <div class="flex items-center gap-4"><span class="topbar-date">{% now 'D, d M Y' %}</span><button type="button" id="theme-toggle" class="icon-button" aria-label="Switch to dark mode" aria-pressed="false"><svg class="icon theme-moon"><use href="#i-moon"/></svg><svg class="icon theme-sun"><use href="#i-sun"/></svg></button></div>
+                <div class="flex flex-wrap items-center justify-end gap-3">
+                    {% if user.is_authenticated %}<span class="text-xs">{{ user.username }} · {% if is_librarian %}Librarian{% else %}Student{% endif %}</span><a class="text-link text-xs" href="{% url 'password_change' %}">Password</a><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="text-link text-xs" type="submit">Sign out</button></form>{% else %}<a class="text-link text-sm" href="{% url 'login' %}">Sign in</a><a class="text-link text-sm" href="{% url 'register' %}">Join</a>{% endif %}
+                    <button type="button" id="theme-toggle" class="icon-button" aria-label="Switch to dark mode" aria-pressed="false"><svg class="icon theme-moon"><use href="#i-moon"/></svg><svg class="icon theme-sun"><use href="#i-sun"/></svg></button>
+                </div>
             </header>
-            <main id="main-content" tabindex="-1" class="content-shell">{% block content %}{% endblock %}</main>
+            <main id="main-content" tabindex="-1" class="content-shell">
+                {% for message in messages %}<div role="status" class="notice notice-{{ message.tags }} mb-5">{{ message }}</div>{% endfor %}
+                {% block content %}{% endblock %}
+            </main>
             <footer class="site-footer"><span>The Reading Room · Central Library</span><span>Made for the love of reading · {% now 'Y' %}</span></footer>
         </div>
     </div>

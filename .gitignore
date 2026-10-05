@@ -4,3 +4,10 @@ __pycache__/
 *.pyc
 staticfiles/
 .ui-preview/
+.local/
+.env
+.env.*
+!.env.example
+*.sqlite3
+coverage.xml
+.coverage

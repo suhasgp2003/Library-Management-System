@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Borrowing desk{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">EVERY BOOK HAS A JOURNEY</p><h1>{% if is_librarian %}The borrowing desk{% else %}My borrowing history{% endif %}</h1><p class="muted mt-3">Track active loans, due dates, and completed returns.</p></div></div>
+<form method="get" class="panel flex flex-col sm:flex-row gap-3 mb-7"><label class="sr-only" for="loan-search">Search loans</label><input id="loan-search" class="form-input" type="search" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search book{% if is_librarian %}, reader, or USN{% endif %}"><label class="sr-only" for="loan-status">Loan status</label><select class="select-field" name="status" id="loan-status"><option value="active" {% if status == 'active' %}selected{% endif %}>Active loans</option><option value="overdue" {% if status == 'overdue' %}selected{% endif %}>Overdue</option><option value="returned" {% if status == 'returned' %}selected{% endif %}>Returned</option><option value="all" {% if status == 'all' %}selected{% endif %}>All loans</option></select><button class="button button-primary" type="submit">Filter loans</button></form>
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-5">{% for record in loans %}{% include 'components/loan-card.html' %}{% empty %}<div class="empty-state xl:col-span-2"><h3>No loans here</h3><p>Try a different filter or explore the collection.</p></div>{% endfor %}</div>
+{% include 'components/pagination.html' %}
+{% endblock %}
