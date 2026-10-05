@@ -35,6 +35,10 @@ npm run build:css
 - The shared header shows a page breadcrumb and reader name. Account actions live
   in a keyboard-accessible profile dropdown; Escape closes it and returns focus.
   Small screens use an avatar-only trigger and keep the menu within the viewport.
+- Sidebar links are grouped by workspace and information, with an active-page
+  highlight. On short desktop windows the navigation scrolls independently; the
+  decorative reading card hides to prioritize navigation. Mobile has a native
+  collapsible menu with Escape-to-close support and a no-JavaScript fallback.
 - Book and reader searches, filters, sorting, and pagination run on the server,
   so they work across the entire collection and preserve query parameters.
 - The theme follows the system preference until manually changed. A manual

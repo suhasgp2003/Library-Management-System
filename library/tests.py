@@ -310,6 +310,18 @@ class LibraryWorkflowTests(TestCase):
         self.assertContains(response, 'Join library')
         self.assertNotContains(response, 'data-account-menu')
 
+    def test_sidebar_groups_links_and_marks_current_page(self):
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse('about'))
+        self.assertContains(response, 'Library navigation menu')
+        self.assertContains(response, 'Help &amp; information')
+        self.assertContains(response, f'href="{reverse("about")}" aria-current="page"')
+        self.assertNotContains(response, reverse('students'))
+        self.as_staff()
+        response = self.client.get(reverse('book_edit', args=[self.book.pk]))
+        self.assertContains(response, f'href="{reverse("books")}" aria-current="page"')
+        self.assertContains(response, 'Manage library')
+
     def test_empty_dashboard_and_catalogue_render(self):
         self.as_staff()
         services.return_loan(self.loan.pk)

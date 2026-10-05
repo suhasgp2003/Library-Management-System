@@ -26,28 +26,46 @@
         <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
         <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"/><path d="m12 12 9 9m-5-5 3-3m-6 0 3-3"/></symbol>
         <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5m5-12 4 4-4 4m-7-4h11"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+        <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/></symbol>
     </svg>
     <div class="app-layout">
-        <aside class="sidebar">
-            <a class="brand" href="{% url 'home' %}" aria-label="The Reading Room home"><span class="brand-mark"><svg class="icon"><use href="#i-book"/></svg></span><span>The Reading<br>Room<span class="brand-caption">YOUR LIBRARY, REIMAGINED</span></span></a>
-            <p class="nav-label">WORKSPACE</p>
+        <aside class="sidebar" aria-label="Library sidebar">
+            <div class="sidebar-brand-row">
+                <a class="brand" href="{% url 'home' %}" aria-label="The Reading Room home">
+                    <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>
+                    <span class="brand-wordmark"><span class="brand-overline">The</span><span class="brand-title">Reading Room</span><span class="brand-caption">Read. Discover. Repeat.</span></span>
+                </a>
+            </div>
             {% with current=request.resolver_match.url_name %}
-            <nav class="primary-nav" aria-label="Main navigation">
-                <a href="{% url 'home' %}" {% if current == 'home' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-grid"/></svg>Overview</a>
-                <a href="{% url 'books' %}" {% if current == 'books' or current == 'book_history' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-book"/></svg>Book collection</a>
-                {% if is_librarian %}<a href="{% url 'students' %}" {% if current == 'students' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-users"/></svg>Readers</a>{% endif %}
-                {% if user.is_authenticated %}
-                <a href="{% url 'loans' %}" {% if current == 'loans' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-clock"/></svg>{% if is_librarian %}Borrowing desk{% else %}My loans{% endif %}</a>
-                <a href="{% url 'reservations' %}" {% if current == 'reservations' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-book"/></svg>Reservations</a>
-                {% endif %}
-            </nav>
-            <div class="sidebar-bottom">
-                <div class="reading-note"><span class="eyebrow">A LITTLE INSPIRATION</span><p>One more chapter.<br>One new perspective.</p><svg class="icon"><use href="#i-book"/></svg></div>
-                <nav class="primary-nav" aria-label="Library information">
-                    <a href="{% url 'about' %}" {% if current == 'about' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-info"/></svg>About the library</a>
-                    <a href="{% url 'contact' %}" {% if current == 'contact' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-mail"/></svg>Get in touch</a>
-                </nav>
-                <div class="library-signature"><span class="avatar">CL</span><div><strong>Central Library</strong><span>Bengaluru, Karnataka</span></div></div>
+            <details class="sidebar-navigation" data-sidebar-navigation open>
+                <summary class="sidebar-menu-toggle" aria-label="Library navigation menu" title="Library navigation menu"><svg class="icon navigation-open" aria-hidden="true"><use href="#i-menu"/></svg><svg class="icon navigation-close" aria-hidden="true"><use href="#i-close"/></svg></summary>
+                <div class="sidebar-scroll">
+                    <section class="sidebar-section">
+                        <p class="nav-label">{% if is_librarian %}Manage library{% elif user.is_authenticated %}My library{% else %}Discover{% endif %}</p>
+                        <nav class="primary-nav" aria-label="Main navigation">
+                            <a href="{% url 'home' %}" {% if current == 'home' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-grid"/></svg></span>Overview</a>
+                            <a href="{% url 'books' %}" {% if current == 'books' or current == 'book_history' or current == 'book_add' or current == 'book_edit' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>Book collection</a>
+                            {% if is_librarian %}<a href="{% url 'students' %}" {% if current == 'students' or current == 'student_add' or current == 'student_edit' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-users"/></svg></span>Readers</a>{% endif %}
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'loans' %}" {% if current == 'loans' or current == 'issue_book' or current == 'return_book' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-clock"/></svg></span>{% if is_librarian %}Borrowing desk{% else %}My loans{% endif %}</a>
+                            <a href="{% url 'reservations' %}" {% if current == 'reservations' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-bookmark"/></svg></span>Reservations</a>
+                            {% endif %}
+                        </nav>
+                    </section>
+                    <section class="sidebar-section sidebar-information">
+                        <p class="nav-label">Help &amp; information</p>
+                        <nav class="primary-nav" aria-label="Library information">
+                            <a href="{% url 'about' %}" {% if current == 'about' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-info"/></svg></span>About the library</a>
+                            <a href="{% url 'contact' %}" {% if current == 'contact' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-mail"/></svg></span>Get in touch</a>
+                        </nav>
+                    </section>
+                </div>
+            </details>
+            <div class="sidebar-footer">
+                <div class="reading-note"><span class="eyebrow">Between the covers</span><p>Your next chapter<br>starts here.</p><svg class="icon reading-note-decoration" aria-hidden="true"><use href="#i-book"/></svg><a class="reading-note-link" href="{% url 'books' %}">Explore the collection <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+                <div class="library-signature"><span class="library-emblem" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span><div><strong>Central Library</strong><span>Bengaluru, Karnataka</span></div></div>
             </div>
             {% endwith %}
         </aside>

@@ -18,13 +18,23 @@
         if (!saved) { document.documentElement.classList.toggle('dark', event.matches); updateThemeButton(); }
     });
     const accountMenu = document.querySelector('[data-account-menu]');
+    const sidebarNavigation = document.querySelector('[data-sidebar-navigation]');
+    const desktopNavigation = window.matchMedia('(min-width: 1024px)');
+    const syncNavigation = () => { if (sidebarNavigation) sidebarNavigation.open = desktopNavigation.matches; };
+    syncNavigation();
+    desktopNavigation.addEventListener('change', syncNavigation);
     document.addEventListener('click', event => {
         if (accountMenu?.open && !accountMenu.contains(event.target)) accountMenu.open = false;
+        if (!desktopNavigation.matches && sidebarNavigation?.open && !event.target.closest('.sidebar')) sidebarNavigation.open = false;
     });
     document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && accountMenu?.open) {
             accountMenu.open = false;
             accountMenu.querySelector('summary').focus();
+            event.preventDefault();
+        } else if (event.key === 'Escape' && !desktopNavigation.matches && sidebarNavigation?.open) {
+            sidebarNavigation.open = false;
+            sidebarNavigation.querySelector('summary').focus();
             event.preventDefault();
         }
     });
