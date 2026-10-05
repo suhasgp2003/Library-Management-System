@@ -7,6 +7,24 @@ register = template.Library()
 
 
 @register.simple_tag
+def library_page_label(route, is_librarian=False):
+    """Human-readable location for the shared header; no database access."""
+    labels = {
+        'home': 'Overview' if is_librarian else 'My reading room',
+        'books': 'Book collection', 'book_history': 'Book details',
+        'book_add': 'Add a book', 'book_edit': 'Edit book',
+        'students': 'Readers', 'student_add': 'Add a reader',
+        'student_edit': 'Edit reader',
+        'loans': 'Borrowing desk' if is_librarian else 'My loans',
+        'reservations': 'Reservations', 'issue_book': 'Issue a book',
+        'return_book': 'Return a book', 'about': 'About the library',
+        'contact': 'Get in touch', 'login': 'Sign in', 'register': 'Join the library',
+        'password_change': 'Account settings', 'password_change_done': 'Account settings',
+    }
+    return labels.get(route, 'Your library')
+
+
+@register.simple_tag
 def library_overview():
     totals = Book.objects.filter(is_archived=False).aggregate(copies=Sum('quantity'), available=Sum('available_copies'))
     copies = totals['copies'] or 0

@@ -4,6 +4,7 @@
         const dark = document.documentElement.classList.contains('dark');
         themeButton?.setAttribute('aria-pressed', String(dark));
         themeButton?.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} mode`);
+        themeButton?.setAttribute('title', `Switch to ${dark ? 'light' : 'dark'} mode`);
     };
     updateThemeButton();
     themeButton?.addEventListener('click', () => {
@@ -15,6 +16,17 @@
         let saved;
         try { saved = localStorage.getItem('reading-room-theme'); } catch (_) { /* No saved preference. */ }
         if (!saved) { document.documentElement.classList.toggle('dark', event.matches); updateThemeButton(); }
+    });
+    const accountMenu = document.querySelector('[data-account-menu]');
+    document.addEventListener('click', event => {
+        if (accountMenu?.open && !accountMenu.contains(event.target)) accountMenu.open = false;
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && accountMenu?.open) {
+            accountMenu.open = false;
+            accountMenu.querySelector('summary').focus();
+            event.preventDefault();
+        }
     });
     document.querySelectorAll('[data-cover]').forEach(image => {
         const showCover = () => { if (image.naturalWidth > 1) image.classList.add('is-loaded'); };

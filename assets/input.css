@@ -55,8 +55,45 @@
     .library-signature strong { @apply block text-xs font-semibold; }
     .library-signature div>span { @apply block text-[10px] mt-1; color:var(--muted); }
     .icon { @apply w-5 h-5 shrink-0; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-    .topbar { @apply flex items-center justify-between gap-4 px-5 sm:px-8 lg:px-10 py-4; border-bottom:1px solid var(--line); background:var(--surface); color:var(--muted); }
-    .topbar-date { @apply hidden md:block text-xs; }
+    .topbar { @apply relative z-20 flex items-center justify-between gap-3 px-5 sm:px-8 lg:px-10 py-3 sm:py-4; min-height:76px; border-bottom:1px solid var(--line); background:var(--surface); }
+    .topbar-context { @apply flex items-center gap-3 min-w-0; }
+    .topbar-emblem { @apply hidden md:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl; background:var(--soft); color:var(--accent); }
+    .topbar-location { @apply min-w-0; }
+    .topbar-kicker { @apply text-[9px] font-semibold uppercase tracking-[.16em] mb-1.5; color:var(--muted); }
+    .topbar-breadcrumb { @apply flex items-center gap-2 text-xs sm:text-sm min-w-0; }
+    .topbar-breadcrumb>a { @apply hidden sm:block; color:var(--muted); }
+    .topbar-breadcrumb>a:hover { color:var(--accent); }
+    .topbar-breadcrumb>span[aria-hidden] { @apply hidden sm:block; color:var(--line); }
+    .topbar-breadcrumb>span[aria-current] { @apply font-semibold truncate; }
+    .topbar-controls { @apply flex items-center gap-2 sm:gap-3 shrink-0; }
+    .topbar-divider { @apply hidden sm:block h-7 w-px; background:var(--line); }
+    .topbar .topbar-theme { @apply rounded-xl w-11 h-11; background:var(--paper); }
+    .account-menu { @apply relative; }
+    .account-trigger { @apply flex items-center gap-3 rounded-xl p-1 sm:p-1.5 cursor-pointer; list-style:none; transition:background-color .2s; }
+    .account-trigger::-webkit-details-marker { display:none; }
+    .account-trigger:hover,.account-menu[open] .account-trigger { background:var(--soft); }
+    .account-trigger:focus-visible { outline:3px solid var(--accent); outline-offset:4px; }
+    .account-avatar { @apply flex w-11 h-11 items-center justify-center rounded-full shrink-0 font-serif text-xl font-bold; background:var(--soft); color:var(--accent); border:1px solid var(--line); }
+    .account-identity { @apply hidden sm:flex flex-col gap-0.5 min-w-0; }
+    .account-identity>strong { @apply font-semibold text-sm truncate; max-width:170px; }
+    .account-role { @apply text-[11px]; color:var(--muted); }
+    .account-chevron { @apply hidden sm:block w-4 h-4; color:var(--muted); transition:transform .2s; }
+    .account-menu[open] .account-chevron { transform:rotate(180deg); }
+    .account-popover { @apply absolute right-0 rounded-2xl overflow-hidden p-2; top:calc(100% + 12px); width:min(290px,calc(100vw - 40px)); background:var(--surface); border:1px solid var(--line); box-shadow:0 14px 40px #132b2224; animation:account-reveal .16s ease-out; }
+    .dark .account-popover { box-shadow:0 14px 40px #00000040; }
+    .account-menu-heading { @apply px-3 pt-3 pb-4; border-bottom:1px solid var(--line); }
+    .account-menu-label { @apply block text-[9px] font-semibold uppercase tracking-[.14em] mb-2; color:var(--muted); }
+    .account-menu-heading>strong { @apply block text-sm font-semibold; overflow-wrap:anywhere; }
+    .account-menu-heading>span:last-child { @apply block text-xs mt-1; color:var(--muted); overflow-wrap:anywhere; }
+    .account-links { @apply py-2 space-y-1; }
+    .account-links>a,.account-signout>button { @apply flex items-center gap-3 w-full rounded-lg px-3 py-3 text-sm text-left; min-height:44px; }
+    .account-links>a:hover,.account-signout>button:hover { background:var(--soft); color:var(--accent); }
+    .account-links .icon,.account-signout .icon { @apply w-4 h-4; color:var(--muted); }
+    .account-signout { @apply pt-2; border-top:1px solid var(--line); }
+    .topbar-signin,.topbar-join { @apply inline-flex items-center justify-center rounded-lg px-3 py-2 text-xs sm:text-sm font-semibold; min-height:44px; }
+    .topbar-signin:hover { background:var(--soft); }
+    .topbar-join { background:var(--accent); color:var(--surface); }
+    .topbar-join:hover { box-shadow:0 4px 12px #305b4626; }
     .icon-button { @apply flex items-center justify-center rounded-full w-10 h-10; border:1px solid var(--line); color:var(--ink); }
     .icon-button:hover { background:var(--soft); }
     .theme-sun { display:none; }
@@ -167,4 +204,6 @@
     .skip-link { @apply fixed top-3 left-3 z-50 rounded-lg px-5 py-3; background:var(--accent); color:var(--surface); transform:translateY(-150%); }
     .skip-link:focus { transform:translateY(0); }
 }
+@keyframes account-reveal { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
+@media (max-width:359px) { .topbar { padding-inline:16px; gap:8px; } .topbar-controls { gap:4px; } .topbar-signin,.topbar-join { padding-inline:8px; font-size:11px; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } .book-card:hover,.button:hover,a.metric-card:hover { transform:none; } }

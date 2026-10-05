@@ -32,6 +32,9 @@ npm run build:css
 
 ## Interface behavior
 
+- The shared header shows a page breadcrumb and reader name. Account actions live
+  in a keyboard-accessible profile dropdown; Escape closes it and returns focus.
+  Small screens use an avatar-only trigger and keep the menu within the viewport.
 - Book and reader searches, filters, sorting, and pagination run on the server,
   so they work across the entire collection and preserve query parameters.
 - The theme follows the system preference until manually changed. A manual

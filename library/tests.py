@@ -295,6 +295,21 @@ class LibraryWorkflowTests(TestCase):
             self.assertEqual(response.status_code, 200, name)
             self.assertContains(response, 'id="theme-toggle"')
 
+    def test_header_uses_reader_name_and_secure_account_menu(self):
+        self.client.force_login(self.user1)
+        response = self.client.get(reverse('books'))
+        self.assertContains(response, f'Account menu for {self.reader1.student_name}')
+        self.assertContains(response, 'aria-label="Breadcrumb"')
+        self.assertContains(response, 'Change password')
+        self.assertContains(response, f'method="post" action="{reverse("logout")}"')
+        self.assertContains(response, 'csrfmiddlewaretoken')
+        self.assertNotContains(response, self.reader2.student_name)
+
+    def test_guest_header_shows_login_without_account_menu(self):
+        response = self.client.get(reverse('books'))
+        self.assertContains(response, 'Join library')
+        self.assertNotContains(response, 'data-account-menu')
+
     def test_empty_dashboard_and_catalogue_render(self):
         self.as_staff()
         services.return_loan(self.loan.pk)
