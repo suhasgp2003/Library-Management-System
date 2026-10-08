@@ -2,12 +2,13 @@
 
 The Django interface uses a cream-and-forest palette, serif editorial headings,
 large book covers, responsive cards, keyboard-accessible controls, and light/dark
-themes. Models, migrations, routes, circulation views, and database settings are
-unchanged. `library/templatetags/library_ui.py` supplies read-only dashboard data.
+themes. Backend workflows use permission-checked forms, MySQL migrations,
+environment-based settings, and transactional circulation services.
+See `README.md` and `docs/architecture.md` for the current full-stack workflow.
 
 ## Run locally
 
-Use Python 3.12 or later and the repository's requirements:
+Configure MySQL and `.env` using `README.md` first. Then use Python 3.12 or later:
 
 ```powershell
 python -m venv .venv
@@ -18,7 +19,7 @@ python -m venv .venv
 ## Edit the styles
 
 The generated `library/static/css/style.css` is included so a Python deployment
-does not need Node or a runtime Tailwind CDN. Edit `input.css` and rebuild when
+does not need Node or a runtime Tailwind CDN. Edit `assets/input.css` and rebuild when
 templates, utility classes, or theme styles change:
 
 ```powershell
@@ -31,18 +32,23 @@ npm run build:css
 
 ## Interface behavior
 
-- Book search submits the existing `q` parameter. Category, availability, and
-  sorting refine the current results in the browser. Reset filters clears those
-  refinements; View all books also clears the server search.
-- Reader search and department filters run in the browser.
+- The shared header shows a page breadcrumb and reader name. Account actions live
+  in a keyboard-accessible profile dropdown; Escape closes it and returns focus.
+  Small screens use an avatar-only trigger and keep the menu within the viewport.
+- Sidebar links are grouped by workspace and information, with an active-page
+  highlight. On short desktop windows the navigation scrolls independently; the
+  decorative reading card hides to prioritize navigation. Mobile has a native
+  collapsible menu with Escape-to-close support and a no-JavaScript fallback.
+- Book and reader searches, filters, sorting, and pagination run on the server,
+  so they work across the entire collection and preserve query parameters.
 - The theme follows the system preference until manually changed. A manual
   preference is saved locally; storage-blocked browsers still support toggling.
 - Covers use Open Library's ISBN cover endpoint with no referrer. Missing or
   failed images leave a locally styled title-and-author cover in place.
 - Contact opens a draft in the user's email application. There is no new email
   service or submission endpoint.
-- Issue/return links preserve the repository's existing behavior. The UI hides
-  issuing when no copies are available.
+- Issue/return links open librarian-only forms; state changes require POST and CSRF.
+  Student pages show only that student's loans and reservations.
 
 ## Verification
 

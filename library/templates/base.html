@@ -1,4 +1,4 @@
-{% load static %}
+{% load static library_ui %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,33 +23,95 @@
         <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
         <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.1"/></symbol>
         <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+        <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"/><path d="m12 12 9 9m-5-5 3-3m-6 0 3-3"/></symbol>
+        <symbol id="i-logout" viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5m5-12 4 4-4 4m-7-4h11"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+        <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/></symbol>
     </svg>
     <div class="app-layout">
-        <aside class="sidebar">
-            <a class="brand" href="{% url 'home' %}" aria-label="The Reading Room home"><span class="brand-mark"><svg class="icon"><use href="#i-book"/></svg></span><span>The Reading<br>Room<span class="brand-caption">YOUR LIBRARY, REIMAGINED</span></span></a>
-            <p class="nav-label">WORKSPACE</p>
+        <aside class="sidebar" aria-label="Library sidebar">
+            <div class="sidebar-brand-row">
+                <a class="brand" href="{% url 'home' %}" aria-label="The Reading Room home">
+                    <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>
+                    <span class="brand-wordmark"><span class="brand-overline">The</span><span class="brand-title">Reading Room</span><span class="brand-caption">Read. Discover. Repeat.</span></span>
+                </a>
+            </div>
             {% with current=request.resolver_match.url_name %}
-            <nav class="primary-nav" aria-label="Main navigation">
-                <a href="{% url 'home' %}" {% if current == 'home' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-grid"/></svg>Overview</a>
-                <a href="{% url 'books' %}" {% if current == 'books' or current == 'book_history' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-book"/></svg>Book collection</a>
-                <a href="{% url 'students' %}" {% if current == 'students' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-users"/></svg>Readers</a>
-            </nav>
-            <div class="sidebar-bottom">
-                <div class="reading-note"><span class="eyebrow">A LITTLE INSPIRATION</span><p>One more chapter.<br>One new perspective.</p><svg class="icon"><use href="#i-book"/></svg></div>
-                <nav class="primary-nav" aria-label="Library information">
-                    <a href="{% url 'about' %}" {% if current == 'about' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-info"/></svg>About the library</a>
-                    <a href="{% url 'contact' %}" {% if current == 'contact' %}aria-current="page"{% endif %}><svg class="icon"><use href="#i-mail"/></svg>Get in touch</a>
-                </nav>
-                <div class="library-signature"><span class="avatar">CL</span><div><strong>Central Library</strong><span>Bengaluru, Karnataka</span></div></div>
+            <details class="sidebar-navigation" data-sidebar-navigation open>
+                <summary class="sidebar-menu-toggle" aria-label="Library navigation menu" title="Library navigation menu"><svg class="icon navigation-open" aria-hidden="true"><use href="#i-menu"/></svg><svg class="icon navigation-close" aria-hidden="true"><use href="#i-close"/></svg></summary>
+                <div class="sidebar-scroll">
+                    <section class="sidebar-section">
+                        <p class="nav-label">{% if is_librarian %}Manage library{% elif user.is_authenticated %}My library{% else %}Discover{% endif %}</p>
+                        <nav class="primary-nav" aria-label="Main navigation">
+                            <a href="{% url 'home' %}" {% if current == 'home' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-grid"/></svg></span>Overview</a>
+                            <a href="{% url 'books' %}" {% if current == 'books' or current == 'book_history' or current == 'book_add' or current == 'book_edit' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>Book collection</a>
+                            {% if is_librarian %}<a href="{% url 'students' %}" {% if current == 'students' or current == 'student_add' or current == 'student_edit' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-users"/></svg></span>Readers</a>{% endif %}
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'loans' %}" {% if current == 'loans' or current == 'issue_book' or current == 'return_book' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-clock"/></svg></span>{% if is_librarian %}Borrowing desk{% else %}My loans{% endif %}</a>
+                            <a href="{% url 'reservations' %}" {% if current == 'reservations' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-bookmark"/></svg></span>Reservations</a>
+                            {% endif %}
+                        </nav>
+                    </section>
+                    <section class="sidebar-section sidebar-information">
+                        <p class="nav-label">Help &amp; information</p>
+                        <nav class="primary-nav" aria-label="Library information">
+                            <a href="{% url 'about' %}" {% if current == 'about' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-info"/></svg></span>About the library</a>
+                            <a href="{% url 'contact' %}" {% if current == 'contact' %}aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true"><svg class="icon"><use href="#i-mail"/></svg></span>Get in touch</a>
+                        </nav>
+                    </section>
+                </div>
+            </details>
+            <div class="sidebar-footer">
+                <div class="reading-note"><span class="eyebrow">Between the covers</span><p>Your next chapter<br>starts here.</p><svg class="icon reading-note-decoration" aria-hidden="true"><use href="#i-book"/></svg><a class="reading-note-link" href="{% url 'books' %}">Explore the collection <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+                <div class="library-signature"><span class="library-emblem" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span><div><strong>Central Library</strong><span>Bengaluru, Karnataka</span></div></div>
             </div>
             {% endwith %}
         </aside>
         <div class="min-w-0">
-            <header class="topbar">
-                <div class="flex items-center gap-3"><span class="status-dot"></span><span class="text-sm">A space for curious minds</span></div>
-                <div class="flex items-center gap-4"><span class="topbar-date">{% now 'D, d M Y' %}</span><button type="button" id="theme-toggle" class="icon-button" aria-label="Switch to dark mode" aria-pressed="false"><svg class="icon theme-moon"><use href="#i-moon"/></svg><svg class="icon theme-sun"><use href="#i-sun"/></svg></button></div>
+            <header class="topbar" aria-label="Library header">
+                {% library_page_label request.resolver_match.url_name is_librarian as page_label %}
+                <div class="topbar-context">
+                    <span class="topbar-emblem" aria-hidden="true"><svg class="icon"><use href="#i-book"/></svg></span>
+                    <div class="topbar-location">
+                        <p class="topbar-kicker">Central Library</p>
+                        <nav class="topbar-breadcrumb" aria-label="Breadcrumb">
+                            <a href="{% url 'home' %}">Library</a><span aria-hidden="true">/</span><span aria-current="page">{{ page_label }}</span>
+                        </nav>
+                    </div>
+                </div>
+                <div class="topbar-controls">
+                    <button type="button" id="theme-toggle" class="icon-button topbar-theme" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode"><svg class="icon theme-moon"><use href="#i-moon"/></svg><svg class="icon theme-sun"><use href="#i-sun"/></svg></button>
+                    {% if user.is_authenticated %}
+                    {% with display_name=current_reader.student_name|default:user.get_full_name|default:user.username %}
+                    <span class="topbar-divider" aria-hidden="true"></span>
+                    <details class="account-menu" data-account-menu>
+                        <summary class="account-trigger" aria-label="Account menu for {{ display_name }}">
+                            <span class="account-avatar" aria-hidden="true">{{ display_name|slice:':1'|upper }}</span>
+                            <span class="account-identity"><strong>{{ display_name }}</strong><span class="account-role">{% if is_librarian %}Librarian{% else %}Student{% endif %}</span></span>
+                            <svg class="icon account-chevron" aria-hidden="true"><use href="#i-chevron"/></svg>
+                        </summary>
+                        <div class="account-popover">
+                            <div class="account-menu-heading"><span class="account-menu-label">Your account</span><strong>{{ display_name }}</strong><span>@{{ user.username }} · {% if is_librarian %}Librarian{% else %}Student{% endif %}</span></div>
+                            <nav class="account-links" aria-label="Account navigation">
+                                <a href="{% url 'home' %}"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>{% if is_librarian %}Library overview{% else %}My reading room{% endif %}</a>
+                                <a href="{% url 'loans' %}"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>{% if is_librarian %}Borrowing desk{% else %}My loans{% endif %}</a>
+                                <a href="{% url 'password_change' %}"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg>Change password</a>
+                            </nav>
+                            <form method="post" action="{% url 'logout' %}" class="account-signout">{% csrf_token %}<button type="submit"><svg class="icon" aria-hidden="true"><use href="#i-logout"/></svg>Sign out</button></form>
+                        </div>
+                    </details>
+                    {% endwith %}
+                    {% else %}
+                    <a class="topbar-signin" href="{% url 'login' %}">Sign in</a><a class="topbar-join" href="{% url 'register' %}">Join library</a>
+                    {% endif %}
+                </div>
             </header>
-            <main id="main-content" tabindex="-1" class="content-shell">{% block content %}{% endblock %}</main>
+            <main id="main-content" tabindex="-1" class="content-shell">
+                {% for message in messages %}<div role="status" class="notice notice-{{ message.tags }} mb-5">{{ message }}</div>{% endfor %}
+                {% block content %}{% endblock %}
+            </main>
             <footer class="site-footer"><span>The Reading Room · Central Library</span><span>Made for the love of reading · {% now 'Y' %}</span></footer>
         </div>
     </div>

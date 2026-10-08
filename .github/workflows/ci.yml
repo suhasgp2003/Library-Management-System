@@ -1,0 +1,65 @@
+name: Django and Tailwind checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ci-database-password
+          MYSQL_DATABASE: reading_room
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DJANGO_SECRET_KEY: ci-only-test-secret-with-at-least-fifty-random-looking-characters-2026
+      DJANGO_DEBUG: 'true'
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+      MYSQL_DATABASE: reading_room
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ci-database-password
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_PORT: '3306'
+      MYSQL_TEST_DATABASE: test_reading_room
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install MySQL build libraries
+        run: sudo apt-get update && sudo apt-get install -y default-libmysqlclient-dev build-essential pkg-config
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Build interface
+        run: |
+          npm ci
+          npm run build:css
+          node --check library/static/js/script.js
+          node --check library/static/js/theme.js
+      - name: Validate migrations and static assets
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+          python manage.py collectstatic --noinput
+      - name: Run MySQL workflow and concurrency tests
+        run: python manage.py test library --noinput
+      - name: Validate production security configuration
+        env:
+          DJANGO_DEBUG: 'false'
+          DJANGO_HSTS_INCLUDE_SUBDOMAINS: 'true'
+          DJANGO_HSTS_PRELOAD: 'true'
+        run: python manage.py check --deploy --fail-level WARNING

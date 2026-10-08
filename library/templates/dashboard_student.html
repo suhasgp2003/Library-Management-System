@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}My reading room{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">YOUR PERSONAL READING ROOM</p><h1>Welcome, {{ reader.student_name|default:user.username }}.</h1><p class="muted mt-3">Your books, your next chapter, and everything due back.</p></div><a class="button button-primary" href="{% url 'books' %}">Find your next read</a></div>
+{% if not reader %}<div class="notice notice-error mb-7">Your login needs an active reader profile. Please contact the librarian to link your account.</div>{% endif %}
+<section class="grid grid-cols-2 gap-5 mb-8"><a class="metric-card" href="{% url 'loans' %}"><span class="muted text-sm">Active loans</span><strong>{{ active_count }}</strong><p>Books currently with you</p></a><a class="metric-card" href="{% url 'loans' %}?status=overdue"><span class="muted text-sm">Overdue books</span><strong>{{ overdue_count }}</strong><p>Ready to return to the shelves</p></a></section>
+<div class="section-heading"><h2>Your recent loans</h2><a class="text-link text-sm" href="{% url 'loans' %}?status=all">View all</a></div>
+<section class="grid grid-cols-1 xl:grid-cols-2 gap-5">{% for record in loans %}{% include 'components/loan-card.html' %}{% empty %}<div class="empty-state xl:col-span-2"><h3>Your first chapter awaits</h3><p>Explore the collection and ask your librarian to issue a book.</p></div>{% endfor %}</section>
+<div class="section-heading mt-9"><h2>Your reservations</h2><a class="text-link text-sm" href="{% url 'reservations' %}">Manage reservations</a></div>
+<section class="grid grid-cols-1 sm:grid-cols-2 gap-5">{% for reservation in reservations %}<article class="panel"><h3>{{ reservation.book.title }}</h3><p class="muted mt-2">{{ reservation.get_status_display }}</p>{% if reservation.expires_at and reservation.active_slot %}<p class="text-sm mt-2">Collect by {{ reservation.expires_at|date:'M j, Y, H:i' }}</p>{% endif %}</article>{% empty %}<p class="muted">No reservations yet.</p>{% endfor %}</section>
+{% endblock %}
